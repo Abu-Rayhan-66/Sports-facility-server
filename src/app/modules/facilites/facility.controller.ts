@@ -18,7 +18,7 @@ const createFacility = catchAsync(async (req, res ) => {
     statusCode: httpStatus.CREATED,
     message: "Facility added successfully",
     data: {
-        _id:newFacility._id,  
+      _id:newFacility._id,  
         name: newFacility.name,
         description:newFacility.description ,
         pricePerHour: newFacility.pricePerHour,

@@ -13,13 +13,18 @@ const createUserIntoDB = async (payload:TUser)=>{
     return result
 }
 
-export const getUserFromDB = async (data: {
+ const getUserFromDB = async (data: {
     email: string;
     password: string;
   }) => {
     // console.log(data);
     //? check if user exists
-    const user = await User.findOne({email: data.email,}).select("+password").lean();
+    if (!data || !data.email || !data.password) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Email and password are required");
+  }
+
+  
+    const user = await User.findOne({email: data.email!,}).select("+password").lean();
   
     if (!user) {
       throw new AppError(httpStatus.NOT_FOUND, "User not found");
@@ -46,5 +51,6 @@ export const getUserFromDB = async (data: {
 
 export const UserServices = {
     createUserIntoDB,
+    getUserFromDB
     
 }

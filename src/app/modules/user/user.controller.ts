@@ -1,6 +1,6 @@
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
-import { UserServices, getUserFromDB } from "./user.service";
+import { UserServices } from "./user.service";
 import { TUser } from "./user.interface";
 
 export type TUserWithToken = TUser & {
@@ -29,7 +29,7 @@ const createUser = catchAsync(async (req, res)=>{
 
 //? This function is used to handle the request to get a user
  const loginUser = catchAsync(async (req, res) => {
-    const result = await getUserFromDB(req.body);
+    const result = await UserServices.getUserFromDB(req.body);
     res.json({
       success: true,
       statusCode: 200,
