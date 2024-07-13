@@ -4,6 +4,8 @@ import sendResponse from "../../utils/sendResponse";
 import { facilityService } from "./facility.service";
 
 
+
+
 const createFacility = catchAsync(async (req, res ) => {
   // const {_id, role} = tokenUserData;
   // const dbUser = await userService.findUserByIdFromDb(_id)
@@ -29,6 +31,8 @@ const createFacility = catchAsync(async (req, res ) => {
 });
 
 const updateFacility = catchAsync(async(req,res)=>{
+  
+
   const id = req.params.id
   const updatedFacility = await facilityService.updateFacilityUsingIdIntoDb(id,req.body)
   if (!updateFacility) {
@@ -39,6 +43,9 @@ const updateFacility = catchAsync(async(req,res)=>{
       data: [],
     })
   }
+
+ 
+
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
