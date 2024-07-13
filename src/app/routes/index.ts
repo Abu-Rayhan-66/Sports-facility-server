@@ -4,6 +4,7 @@ import facilityRoute from '../modules/facilites/facility.route';
 import bookingRoute from '../modules/booking/booking.route';
 
 
+
 const router = Router();
 
 const moduleRoutes = [
@@ -16,7 +17,7 @@ const moduleRoutes = [
     route: facilityRoute,
   },
   {
-    path: "/bookings",
+    path: "/",
     route: bookingRoute,
   },
  

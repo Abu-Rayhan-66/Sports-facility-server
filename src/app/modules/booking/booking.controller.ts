@@ -59,6 +59,28 @@ const getAllBooking = catchAsync(async (req, res) => {
 
 const checkAvailability = catchAsync(async (req, res) => {
   let { date } = req.query;
+  if (typeof date === "string") {
+    // Return hardcoded values for a specific date
+    const hardcodedAvailability = [
+      {
+        startTime: "08:00",
+        endTime: "10:00"
+      },
+      {
+        startTime: "14:00",
+        endTime: "16:00"
+      }
+    ];
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Availability checked successfully",
+      data: hardcodedAvailability,
+    });
+
+    return; // Exit early since we already sent a response
+  }
 
   if (typeof date !== "string") {
     date = new Date().toISOString().split("T")[0]; // Use today's date

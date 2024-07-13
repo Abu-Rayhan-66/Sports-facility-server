@@ -7,13 +7,14 @@ import { bookingController } from "./booking.controller";
 
 const bookingRoute = Router()
 
-bookingRoute.post('/', auth('user'), validateRequest(createBookingSchema),bookingController.createBooking)
+bookingRoute.post('/bookings', auth('user'), validateRequest(createBookingSchema),bookingController.createBooking)
 
-bookingRoute.get('/', auth('admin'),bookingController.getAllBooking)
+bookingRoute.get('/bookings', auth('admin'),bookingController.getAllBooking)
 
-bookingRoute.get('/user', auth('user'),bookingController.viewBookingsByUser)
+bookingRoute.get('/bookings/user', auth('user'),bookingController.viewBookingsByUser)
 
-bookingRoute.delete('/:id', auth('user'), bookingController.cancelBooking);
+
+bookingRoute.get('/check-availability',  bookingController.checkAvailability);
 
 
 export default bookingRoute
