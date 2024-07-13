@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import { TBooking } from "./booking.interface";
 
-
 const bookingSchema = new mongoose.Schema({
   date: {
     type: Date,
@@ -29,9 +28,9 @@ const bookingSchema = new mongoose.Schema({
   },
   isBooked: {
     type: String,
-    default: 'no',
+    default: "no",
   },
 });
 
-const bookingModel = mongoose.model<TBooking>("Booking", bookingSchema);
-export default bookingModel;
+const BookingModel = mongoose.model<TBooking>("Booking", bookingSchema);
+export default BookingModel;

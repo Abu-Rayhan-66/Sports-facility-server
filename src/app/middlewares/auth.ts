@@ -9,9 +9,7 @@ type Role = "admin" | "user";
 
 export const auth = (...requiredRoles: Role[]) =>
   catchAsync((req: Request, res: Response, next: NextFunction) => {
-    //? split the token from the headers
     const token = req.headers.authorization?.split(" ")[1];
-    // console.log(token);
 
     if (!token)
       return res.status(httpStatus.UNAUTHORIZED).json({
@@ -29,7 +27,6 @@ export const auth = (...requiredRoles: Role[]) =>
         message: "You have no access to this route",
       });
     }
-    // console.log(decoded);
 
     req.user = decoded;
     next();

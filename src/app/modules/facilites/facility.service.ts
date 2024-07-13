@@ -12,9 +12,8 @@ const updateFacilityUsingIdIntoDb = async (
   id: string,
   payload: Record<string, unknown>
 ) => {
-  // if soft delete then dont send data
   const isDeleted = await FacilityModel.findById(id);
-  // console.log(isDeleted)
+
   if (isDeleted?.isDeleted) {
     throw new AppError(httpStatus.NOT_FOUND, "This Facility is deleted");
   }
@@ -37,7 +36,6 @@ const deleteFacilityByIDFromDb = async (id: string) => {
 
 
 const getAllFacilityFromDb = async () => {
-  // remove deleted facilities and send only active facilities
   return await FacilityModel.find({ isDeleted: false });
 }
 

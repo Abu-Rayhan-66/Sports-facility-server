@@ -27,7 +27,7 @@ const createUser = catchAsync(async (req, res)=>{
  })
 })
 
-//? This function is used to handle the request to get a user
+
  const loginUser = catchAsync(async (req, res) => {
     const result = await UserServices.getUserFromDB(req.body);
     res.json({

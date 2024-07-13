@@ -1,18 +1,17 @@
 import { TBooking } from "./booking.interface";
-import bookingModel from "./booking.model";
-
+import BookingModel from "./booking.model";
 
 const createBookingIntoDb = async (payload: TBooking) => {
-  const newBooking = await bookingModel.create(payload);
+  const newBooking = await BookingModel.create(payload);
   return newBooking;
 };
 
 const getAllBookingFromDb = async () => {
-  return await bookingModel.find().populate("facility").populate("user");
+  return await BookingModel.find().populate("facility").populate("user");
 };
 
 const checkAvailability = async (date: string) => {
-  const bookings = await bookingModel.find({ date });
+  const bookings = await BookingModel.find({ date });
 
   const availableTimeSlots = generateAvailableTimeSlots(bookings);
   return availableTimeSlots;
@@ -22,7 +21,6 @@ const generateAvailableTimeSlots = (bookings: TBooking[]) => {
   const openingTime = new Date("1971-01-01T08:00:00");
   const closingTime = new Date("1971-01-01T20:00:00");
 
-  // Sort bookings by start time
   bookings.sort(
     (a, b) =>
       new Date(`1971-01-01T${a.startTime}:00`).getTime() -
@@ -56,22 +54,19 @@ const generateAvailableTimeSlots = (bookings: TBooking[]) => {
 };
 
 const viewBookingsByUserFromDB = async (userId: string) => {
-  return await bookingModel.find({ user: userId }).populate("facility");
+  return await BookingModel.find({ user: userId }).populate("facility");
 };
 
 const cancelBookingById = async (bookingId: string, userId: string) => {
   // Find the booking to cancel
-  const booking = await bookingModel.findOne({ _id: bookingId, user: userId });
+  const booking = await BookingModel.findOne({ _id: bookingId, user: userId });
 
   if (!booking) {
     return null;
   }
-  
+
   booking.isBooked = "canceled";
-
-  // Save the updated booking
   await booking.save();
-
   return booking;
 };
 

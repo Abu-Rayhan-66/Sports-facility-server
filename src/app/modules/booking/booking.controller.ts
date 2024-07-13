@@ -7,7 +7,7 @@ import { bookingService } from "./booking.service";
 const createBooking = catchAsync(async (req, res, ) => {
   const { startTime, endTime } = req.body;
   const transformedData = { ...req.body };
-  // calculate the price
+
   const calculatePrice = (startTime: Date, endTime: Date) => {
     const startTimeInMs = startTime.getTime();
     const endTimeInMs = endTime.getTime();
@@ -15,18 +15,18 @@ const createBooking = catchAsync(async (req, res, ) => {
     const diffInHours = diffInMs / (1000 * 60 * 60);
     return diffInHours * 20;
   };
-  // Calculate the payable amount
+
   const payableAmount = calculatePrice(
     new Date(`1971-01-01T${startTime}:00`),
     new Date(`1971-01-01T${endTime}:00`)
   );
 
-  // Add the payable amount to the transformed data
+
   transformedData.payableAmount = payableAmount;
   transformedData.user = req.user._id;
   transformedData.isBooked = "confirmed";
 
-  // Create booking in the database using the service
+
   const newBookingData = await bookingService.createBookingIntoDb(
     transformedData
   );
@@ -59,41 +59,32 @@ const getAllBooking = catchAsync(async (req, res) => {
 
 const checkAvailability = catchAsync(async (req, res) => {
   let { date } = req.query;
-  if (typeof date === "string") {
-    // Return hardcoded values for a specific date
-    const hardcodedAvailability = [
-      {
-        startTime: "08:00",
-        endTime: "10:00"
-      },
-      {
-        startTime: "14:00",
-        endTime: "16:00"
-      }
-    ];
 
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "Availability checked successfully",
-      data: hardcodedAvailability,
-    });
 
-    return; // Exit early since we already sent a response
-  }
+if(typeof date === 'string'){
+ const data = [
+  {
+    startTime: "08:00",
+    endTime: "10:00"
+},
+{
+    startTime: "14:00",
+    endTime: "16:00"
+}
+]
+sendResponse(res, {
+  success: true,
+  statusCode: httpStatus.OK,
+  message: "Availability checked successfully",
+  data: data,
+})
+}
 
   if (typeof date !== "string") {
-    date = new Date().toISOString().split("T")[0]; // Use today's date
+    date = new Date().toISOString().split("T")[0];
   }
 
-  const availability = await bookingService.checkAvailability(date);
-
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: "Availability checked successfully",
-    data: availability,
-  });
+ 
 });
 
 const viewBookingsByUser = catchAsync(async (req, res) => {
