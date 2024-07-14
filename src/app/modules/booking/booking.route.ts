@@ -13,6 +13,8 @@ bookingRoute.get('/bookings', auth('admin'),bookingController.getAllBooking)
 
 bookingRoute.get('/bookings/user', auth('user'),bookingController.viewBookingsByUser)
 
+bookingRoute.delete('/bookings/:id', auth('user'),bookingController.cancelBooking)
+
 
 bookingRoute.get('/check-availability',  bookingController.checkAvailability);
 
