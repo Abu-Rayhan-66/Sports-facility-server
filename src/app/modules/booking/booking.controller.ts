@@ -5,15 +5,16 @@ import { bookingService } from "./booking.service";
 
 
 const createBooking = catchAsync(async (req, res, ) => {
-  const { startTime, endTime } = req.body;
+  const { startTime, endTime, priceInHour } = req.body;
   const transformedData = { ...req.body };
+
 
   const calculatePrice = (startTime: Date, endTime: Date) => {
     const startTimeInMs = startTime.getTime();
     const endTimeInMs = endTime.getTime();
     const diffInMs = endTimeInMs - startTimeInMs;
     const diffInHours = diffInMs / (1000 * 60 * 60);
-    return diffInHours * 20;
+    return diffInHours * priceInHour ;
   };
 
   const payableAmount = calculatePrice(
@@ -23,8 +24,9 @@ const createBooking = catchAsync(async (req, res, ) => {
 
 
   transformedData.payableAmount = payableAmount;
-  transformedData.user = req.user._id;
-  transformedData.isBooked = "confirmed";
+  transformedData.user = req.user.id;
+  transformedData.isBooked = "pending";
+  // transformedData.transactionId = `TXN-${Date.now()}`;
 
 
   const newBookingData = await bookingService.createBookingIntoDb(
@@ -57,6 +59,20 @@ const getAllBooking = catchAsync(async (req, res) => {
   });
 });
 
+const getSingleBooking = catchAsync(async (req, res) => {
+
+  const { id } = req.params;
+
+  const result = await bookingService.getSingleBookingFromDb(id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Bookings retrieved successfully",
+    data: [result],
+  });
+});
+
 const checkAvailability = catchAsync(async (req, res) => {
   let { date } = req.query;
 
@@ -64,12 +80,14 @@ const checkAvailability = catchAsync(async (req, res) => {
 if(typeof date === 'string'){
  const data = [
   {
-    startTime: "08:00",
-    endTime: "10:00"
+    startTime: "06:00",
+    endTime: "12:00",
+    _id:'1'
 },
 {
     startTime: "14:00",
-    endTime: "16:00"
+    endTime: "22:00",
+    _id:'2'
 }
 ]
 sendResponse(res, {
@@ -88,10 +106,9 @@ sendResponse(res, {
 });
 
 const viewBookingsByUser = catchAsync(async (req, res) => {
-  const { _id: user_id } = req.user;
-  const userBookingsData = await bookingService.viewBookingsByUserFromDB(
-    user_id
-  );
+  const { id: user_id } = req.user;
+  const userBookingsData = await bookingService.viewBookingsByUserFromDB(user_id);
+
   if (userBookingsData.length === 0) {
     return sendResponse(res, {
       success: false,
@@ -122,14 +139,32 @@ const cancelBooking = catchAsync(async (req, res) => {
       data: null,
     });
   }
+})
 
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: "Booking canceled successfully",
-    data: canceledBooking,
-  });
-});
+// const updateBooking = catchAsync(async (req, res) => {
+//   const { id } = req.params;
+//   const updateData = req.body;
+
+//   // console.log("bookingUpdate", id, updateData)
+
+//   const updatedBooking = await bookingService.updateBookingById(id, updateData);
+
+//   if (!updatedBooking) {
+//     return sendResponse(res, {
+//       success: false,
+//       statusCode: httpStatus.NOT_FOUND,
+//       message: "Booking not found or you are not authorized to update  it",
+//       data: null,
+//     });
+//   }
+
+//   sendResponse(res, {
+//     success: true,
+//     statusCode: httpStatus.OK,
+//     message: "Booking updated successfully",
+//     data: updatedBooking,
+//   });
+// });
 
 export const bookingController = {
   createBooking,
@@ -137,4 +172,6 @@ export const bookingController = {
   checkAvailability,
   viewBookingsByUser,
   cancelBooking,
-};
+  getSingleBooking,
+  // updateBooking
+}

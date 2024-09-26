@@ -34,14 +34,39 @@ const deleteFacilityByIDFromDb = async (id: string) => {
   );
 };
 
+const getSingleFacilityByIDFromDb = async (id: string) => {
+  return await FacilityModel.findById(
+    id,
+  );
+};
 
-const getAllFacilityFromDb = async () => {
-  return await FacilityModel.find({ isDeleted: false });
+
+const getAllFacilityFromDb = async (query: Record<string,unknown>) => {
+  const { searchTerm, priceFilter } = query;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const filterConditions: any = {
+    isDeleted: false,
+  };
+
+  if (searchTerm) {
+    filterConditions.$or = [
+      { name: { $regex: searchTerm, $options: "i" } },
+      { location: { $regex: searchTerm, $options: "i" } },
+    ];
+  }
+
+  if (priceFilter) {
+    filterConditions.pricePerHour = priceFilter;
+  }
+
+  return await FacilityModel.find(filterConditions);
 }
 
 export const facilityService = {
   createFacilityIntoDb,
   updateFacilityUsingIdIntoDb,
   deleteFacilityByIDFromDb,
-  getAllFacilityFromDb
+  getAllFacilityFromDb,
+  getSingleFacilityByIDFromDb
 };

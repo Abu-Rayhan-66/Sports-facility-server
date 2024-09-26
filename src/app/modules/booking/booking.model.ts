@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { TBooking } from "./booking.interface";
 
 const bookingSchema = new mongoose.Schema({
@@ -15,16 +15,26 @@ const bookingSchema = new mongoose.Schema({
     required: true,
   },
   user: {
-    type: mongoose.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "User",
   },
   facility: {
-    type: mongoose.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "Facility",
     required: true,
   },
   payableAmount: {
     type: Number,
+  },
+  priceInHour: {
+    type: Number,
+  },
+  booking: {
+    type: Schema.Types.ObjectId,
+    
+  },
+  transactionId: {
+    type: String,
   },
   isBooked: {
     type: String,

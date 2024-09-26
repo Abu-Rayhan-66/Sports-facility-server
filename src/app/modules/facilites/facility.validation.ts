@@ -13,6 +13,9 @@ export const createFacilityValidationSchema = z.object({
   location: z.string({
     required_error: "Location is required",
   }),
+  image: z.string({
+    required_error: "image is required",
+  }),
 });
 
 export const updateFacilityValidationSchema = z.object({
@@ -20,4 +23,5 @@ export const updateFacilityValidationSchema = z.object({
   description: z.string().optional(),
   pricePerHour: z.number().optional(),
   location: z.string().optional(),
+  image: z.string().optional(),
 })

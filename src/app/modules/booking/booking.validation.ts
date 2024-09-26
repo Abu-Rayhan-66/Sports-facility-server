@@ -32,4 +32,9 @@ export const createBookingSchema = z.object({
   facility: z.string(),
   user: z.string().optional(),
   payableAmount: z.number().optional(),
+  priceInHour: z.number().optional(),
+  // booking: z.string().optional(),
+  transactionId:z.string(),
+  isBooked:z.string().optional()
+
 });
