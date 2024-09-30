@@ -11,7 +11,7 @@ bookingRoute.post('/bookings', auth('user'), validateRequest(createBookingSchema
 
 bookingRoute.get('/bookings', auth('admin'),bookingController.getAllBooking)
 
-bookingRoute.get('/bookings/user', auth('user'),bookingController.viewBookingsByUser)
+bookingRoute.get('/bookings/:id', auth('user'),bookingController.viewBookingsByUser)
 
 bookingRoute.get('/bookings/:id', auth('user'),bookingController.getSingleBooking)
 

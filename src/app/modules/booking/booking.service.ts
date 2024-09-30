@@ -39,8 +39,11 @@ const createBookingIntoDb = async (payload: TBooking) => {
   }
 };
 
-const getAllBookingFromDb = async () => {
-  return await BookingModel.find().populate("facility").populate("user");
+const getAllBookingFromDb = async (query: Record<string,unknown>) => {
+  const {  skip = 0, limit  } = query;
+  return await BookingModel.find().populate("facility").populate("user")
+  .skip(Number(skip))   
+  .limit(Number(limit))
 };
 
 const getSingleBookingFromDb = async (params:string) => {
@@ -90,13 +93,16 @@ const generateAvailableTimeSlots = (bookings: TBooking[]) => {
   return availableTimeSlots;
 };
 
-const viewBookingsByUserFromDB = async (userId: string) => {
-  return await BookingModel.find({ user: userId }).populate("facility");
-  
+const viewBookingsByUserFromDB = async (query: Record<string,unknown> ) => {
+  const {id, skip, limit} = query
+ 
+  return await BookingModel.find({ user: id, isBooked: { $in: ["confirmed", "pending"] }, })
+  .populate("facility")
+  .skip(Number(skip))   
+  .limit(Number(limit))
 };
 
 const cancelBookingById = async (bookingId: string, userId: string) => {
-  // Find the booking to cancel
   const booking = await BookingModel.findOne({ _id: bookingId, user: userId });
 
   if (!booking) {
@@ -107,15 +113,7 @@ const cancelBookingById = async (bookingId: string, userId: string) => {
   await booking.save();
   return booking;
 };
-// const updateBookingById = async (bookingId: string, updateData: string) => {
-//   console.log("bookingUpdate", bookingId, updateData)
-//   const updatedBooking = await BookingModel.findByIdAndUpdate( bookingId, updateData);
 
-//   if (!updatedBooking) {
-//     return null;
-//   }
-//   return updateBookingById;
-// };
 
 export const bookingService = {
   createBookingIntoDb,
@@ -124,5 +122,5 @@ export const bookingService = {
   viewBookingsByUserFromDB,
   cancelBookingById,
   getSingleBookingFromDb,
-  // updateBookingById
+
 };

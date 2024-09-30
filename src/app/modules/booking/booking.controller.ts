@@ -42,7 +42,15 @@ const createBooking = catchAsync(async (req, res, ) => {
 });
 
 const getAllBooking = catchAsync(async (req, res) => {
-  const allBookingData = await bookingService.getAllBookingFromDb();
+  const { page = 1, limit = 10 } = req.query;
+  const parsedLimit = Number(limit)  
+  const parsedPage = Number(page) || 1; 
+  const skip = (parsedPage - 1) * parsedLimit; 
+
+  const allBookingData = await bookingService.getAllBookingFromDb({
+    skip,
+    limit:parsedLimit
+  });
   if (allBookingData.length === 0) {
     sendResponse(res, {
       success: false,
@@ -106,8 +114,17 @@ sendResponse(res, {
 });
 
 const viewBookingsByUser = catchAsync(async (req, res) => {
-  const { id: user_id } = req.user;
-  const userBookingsData = await bookingService.viewBookingsByUserFromDB(user_id);
+  const {  page = 1, limit = 2 } = req.query;
+  const parsedLimit = Number(limit) || 2; 
+  const parsedPage = Number(page) || 1; 
+  const skip = (parsedPage - 1) * parsedLimit; 
+  const { id } = req.params;
+  
+  const userBookingsData = await bookingService.viewBookingsByUserFromDB({
+    id,
+    skip,
+    limit:parsedLimit
+  });
 
   if (userBookingsData.length === 0) {
     return sendResponse(res, {
@@ -127,7 +144,7 @@ const viewBookingsByUser = catchAsync(async (req, res) => {
 
 const cancelBooking = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const userId = req.user._id;
+  const userId = req.user.id;
 
   const canceledBooking = await bookingService.cancelBookingById(id, userId);
 
@@ -139,32 +156,15 @@ const cancelBooking = catchAsync(async (req, res) => {
       data: null,
     });
   }
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Bookings cancel successfully",
+    data: canceledBooking,
+  });
+
 })
-
-// const updateBooking = catchAsync(async (req, res) => {
-//   const { id } = req.params;
-//   const updateData = req.body;
-
-//   // console.log("bookingUpdate", id, updateData)
-
-//   const updatedBooking = await bookingService.updateBookingById(id, updateData);
-
-//   if (!updatedBooking) {
-//     return sendResponse(res, {
-//       success: false,
-//       statusCode: httpStatus.NOT_FOUND,
-//       message: "Booking not found or you are not authorized to update  it",
-//       data: null,
-//     });
-//   }
-
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: "Booking updated successfully",
-//     data: updatedBooking,
-//   });
-// });
 
 export const bookingController = {
   createBooking,
@@ -173,5 +173,5 @@ export const bookingController = {
   viewBookingsByUser,
   cancelBooking,
   getSingleBooking,
-  // updateBooking
+  
 }

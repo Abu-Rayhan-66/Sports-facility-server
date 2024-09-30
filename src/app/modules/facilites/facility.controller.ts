@@ -4,8 +4,6 @@ import sendResponse from "../../utils/sendResponse";
 import { facilityService } from "./facility.service";
 
 
-
-
 const createFacility = catchAsync(async (req, res ) => {
   const newFacility = await facilityService.createFacilityIntoDb(req.body);
   sendResponse(res, {
@@ -25,9 +23,8 @@ const createFacility = catchAsync(async (req, res ) => {
 });
 
 const updateFacility = catchAsync(async(req,res)=>{
-  
-
   const id = req.params.id
+
   const updatedFacility = await facilityService.updateFacilityUsingIdIntoDb(id,req.body)
   if (!updateFacility) {
     return sendResponse(res, {
@@ -37,8 +34,6 @@ const updateFacility = catchAsync(async(req,res)=>{
       data: [],
     })
   }
-
- 
 
   sendResponse(res, {
     success: true,
@@ -70,11 +65,13 @@ const getSingleFacilityByID = catchAsync(async(req,res)=>{
   })
 })
 
-
 const getAllFacility = catchAsync(async(req,res)=>{
-  const { searchTerm, minPrice, maxPrice } = req.query;
-  
+  const { searchTerm, minPrice, maxPrice, page = 1, limit = 10 } = req.query;
+  const parsedLimit = Number(limit) || 10; 
+  const parsedPage = Number(page) || 1; 
+  const skip = (parsedPage - 1) * parsedLimit; 
 
+  
 
   const priceFilter: Record<string, unknown> = {};
   if (minPrice) priceFilter.$gte = Number(minPrice);
@@ -84,6 +81,8 @@ const getAllFacility = catchAsync(async(req,res)=>{
   const allFacility = await facilityService.getAllFacilityFromDb({
     searchTerm: searchTerm || "",
     priceFilter: Object.keys(priceFilter).length ? priceFilter : null,
+    skip,
+    limit:parsedLimit
   });
 
   if (allFacility.length === 0) {

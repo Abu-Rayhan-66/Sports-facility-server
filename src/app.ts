@@ -5,15 +5,17 @@ import router from "./app/routes";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import notFound from "./app/middlewares/notFound";
 import { paymentRoute } from "./app/modules/payment/payment.route";
+import path from "path";
 
 
 
 const app: Application = express();
 
+app.use(express.static(path.join(__dirname,"../public")))
 //parsers
 app.use(express.json());
 
-app.use(cors({origin:"http://localhost:5173", credentials:true}));
+app.use(cors({origin:"https://sport-facility.netlify.app", credentials:true}));
 
 // application routes
 app.use("/api", router);

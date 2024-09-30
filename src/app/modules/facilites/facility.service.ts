@@ -42,7 +42,7 @@ const getSingleFacilityByIDFromDb = async (id: string) => {
 
 
 const getAllFacilityFromDb = async (query: Record<string,unknown>) => {
-  const { searchTerm, priceFilter } = query;
+  const { searchTerm, priceFilter, skip = 0, limit = 10 } = query;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const filterConditions: any = {
@@ -60,7 +60,9 @@ const getAllFacilityFromDb = async (query: Record<string,unknown>) => {
     filterConditions.pricePerHour = priceFilter;
   }
 
-  return await FacilityModel.find(filterConditions);
+  return await FacilityModel.find(filterConditions)
+  .skip(Number(skip))   
+  .limit(Number(limit))
 }
 
 export const facilityService = {
